@@ -21,17 +21,9 @@ use env_logger::Env;
 
 use crate::error::AppError;
 
-// TODO: Share client?
-
 #[get("/run")]
-async fn run() -> Result<String, AppError> {
-    // let number = 0;
-
-    let url = Url::parse("https://httpbin.org/post")?;
-
-    let client = client::Client::new();
-
-    let number = client.non_unique(url, 2).await.unwrap();
+async fn run(client: web::Data<Client>) -> Result<String, AppError> {
+    let number = client.non_unique(3).await.unwrap();
 
     Ok(format!("{:?}", number))
 }
@@ -43,6 +35,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(run)
+            .app_data(web::Data::new(client::Client::new("https://httpbin.org")))
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
