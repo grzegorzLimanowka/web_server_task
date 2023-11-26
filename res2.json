@@ -1,0 +1,19 @@
+{
+    "args": {},
+    "data": {
+        "value": 6837612328697013537
+    },
+    "files": {},
+    "form": {},
+    "headers": {
+        "Accept": "*/*",
+        "Content-Length": "31",
+        "Host": "httpbin.org",
+        "X-Amzn-Trace-Id": "Root=1-655ffec2-196b2a633c552687566304d5"
+    },
+    "json": {
+        "value": 6837612328697013537
+    },
+    "origin": "83.22.38.166",
+    "url": "https://httpbin.org/post"
+}
