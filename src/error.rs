@@ -29,7 +29,7 @@ impl error::ResponseError for AppError {
             AppError::UrlParseError(_) => reqwest::StatusCode::INTERNAL_SERVER_ERROR,
             AppError::ClientHttpError(_) => reqwest::StatusCode::INTERNAL_SERVER_ERROR,
             AppError::JoinError(_) => reqwest::StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::TaskError(_) => todo!(),
+            AppError::TaskError(_) => reqwest::StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 

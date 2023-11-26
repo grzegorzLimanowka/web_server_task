@@ -1,31 +1,25 @@
-#![allow(unused)]
+// #![allow(unused)]
 
 mod client;
 mod error;
 
 use client::Client;
-use client::NonUnique;
-
-use std::sync::Mutex;
-
-use url::{ParseError, Url};
 
 use actix_web::{
-    get, guard,
+    get,
     middleware::Logger,
-    post,
-    web::{self, ServiceConfig},
-    App, HttpResponse, HttpServer, Responder, Result,
+    web::{self},
+    App, HttpServer, Result,
 };
 use env_logger::Env;
 
-use crate::error::AppError;
+use crate::{client::FetchResources, error::AppError};
 
 #[get("/run")]
 async fn run(client: web::Data<Client>) -> Result<String, AppError> {
-    let number = client.non_unique(3).await.unwrap();
+    let resources = client.fetch_non_unique(3).await?;
 
-    Ok(format!("{:?}", number))
+    Ok(format!("{:?}", resources))
 }
 
 #[actix_web::main]
