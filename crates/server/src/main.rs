@@ -1,4 +1,4 @@
-// #![allow(unused)]
+#![allow(unused)]
 
 mod client;
 mod error;
@@ -17,7 +17,7 @@ use crate::{client::FetchResources, error::AppError};
 
 #[get("/run")]
 async fn run(client: web::Data<Client>) -> Result<String, AppError> {
-    let resources = client.fetch_non_unique(3).await?;
+    let resources = client.fetch_non_unique(30).await?;
 
     Ok(format!("{:?}", resources))
 }

@@ -1,24 +1,27 @@
-[package]
-name = "web-server-task"
+[workspace.package]
+authors = ["Grzegorz Limanówka"]
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[workspace]
+members = ["crates/aaa", "crates/server"]
 
-[dependencies]
-tokio = { version = "1.33", features = ["full"] }
-# actix = "*"
+[workspace.dependencies]
+tokio = { version = "1.33" }
+
 actix-web = "4.4"
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1.0" }
 serde_json = { version = "1.0" }
 thiserror = "1.0"
-uuid = { version = "1.5", "features" = ["v4", "fast-rng", "macro-diagnostics"] }
-reqwest = { version = "0.11", "features" = ["json"] }
+uuid = { version = "1.5" }
+reqwest = { version = "0.11" }
 sqlx = "0.7"
-# sea-orm = "0.12"
+
 env_logger = "0.10"
-async-trait = "*"
-url = "*"
-log = "*"
-rand = "*"
-rstest = "*"
+async-trait = "0.1"
+url = "2.5"
+log = "0.4"
+rand = "0.8"
+rstest = "0.18"
+
+# sea-orm = "0.12"
