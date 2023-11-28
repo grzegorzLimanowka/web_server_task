@@ -12,6 +12,7 @@ use actix_web::{
     App, HttpServer, Result,
 };
 use env_logger::Env;
+use sea_orm::{Database, DatabaseConnection};
 
 use crate::{client::FetchResources, error::AppError};
 
@@ -23,17 +24,24 @@ async fn run(client: web::Data<Client>) -> Result<String, AppError> {
 }
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    env_logger::init_from_env(Env::default().default_filter_or("info"));
+// async fn main() -> std::io::Result<()> {
+async fn main() {
+    // env_logger::init_from_env(Env::default().default_filter_or("info"));
 
-    HttpServer::new(|| {
-        App::new()
-            .service(run)
-            .app_data(web::Data::new(client::Client::new("https://httpbin.org")))
-            .wrap(Logger::default())
-            .wrap(Logger::new("%a %{User-Agent}i"))
-    })
-    .bind(("127.0.0.1", 8000))?
-    .run()
-    .await
+    // HttpServer::new(|| {
+    //     App::new()
+    //         .service(run)
+    //         .app_data(web::Data::new(client::Client::new("https://httpbin.org")))
+    //         .wrap(Logger::default())
+    //         .wrap(Logger::new("%a %{User-Agent}i"))
+    // })
+    // .bind(("127.0.0.1", 8000))?
+    // .run()
+    // .await
+
+    // let db: DatabaseConnection = Database::connect("mysql://root:my-secret-pw@localhost:3306")
+    //     .await
+    //     .unwrap();
+
+    // println!("{:?}", db);
 }
