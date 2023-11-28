@@ -1,5 +1,5 @@
 [package]
-name = "web-server-task"
+name = "server"
 version = { workspace = true }
 edition = { workspace = true }
 
@@ -8,6 +8,15 @@ edition = { workspace = true }
 [dependencies]
 tokio = { "workspace" = true, features = ["full"] }
 actix-web = { workspace = true }
+async-trait = { workspace = true }
+
+sqlx = { workspace = true }
+sea-orm = { workspace = true, features = [
+    "sqlx-mysql",
+    "runtime-tokio-native-tls",
+    "macros",
+] }
+
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
@@ -17,10 +26,7 @@ uuid = { workspace = true, "features" = [
     "macro-diagnostics",
 ] }
 reqwest = { workspace = true, "features" = ["json"] }
-sqlx = { workspace = true }
-# sea-orm = {workspace = true}
 env_logger = { workspace = true }
-async-trait = { workspace = true }
 url = { workspace = true }
 log = { workspace = true }
 rand = { workspace = true }
