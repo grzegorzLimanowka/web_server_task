@@ -30,6 +30,7 @@ struct ResponseValue {
     value: u32,
 }
 
+#[derive(Debug, Clone)]
 pub struct Client {
     client: reqwest::Client,
     base_url: String,

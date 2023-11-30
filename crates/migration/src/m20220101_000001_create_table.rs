@@ -6,10 +6,15 @@ use sea_orm_migration::prelude::*;
 pub struct Migration;
 
 #[derive(DeriveIden)]
-enum Request {
+enum Requests {
     Table,
+    // Single request
     Id,
+    // Batch ref
+    BatchId,
+    // Value received
     Value,
+    // Informs whether request was successfull
     Status,
 }
 
@@ -28,18 +33,19 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Request::Table)
+                    .table(Requests::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(Request::Id)
+                        ColumnDef::new(Requests::Id)
                             .integer()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Request::Value).string().not_null())
+                    .col(ColumnDef::new(Requests::BatchId).integer().not_null())
+                    .col(ColumnDef::new(Requests::Value).string().not_null())
                     .col(
-                        ColumnDef::new(Request::Status)
+                        ColumnDef::new(Requests::Status)
                             .enumeration(Status::Table, Status::iter().skip(1)),
                     )
                     .to_owned(),
@@ -49,7 +55,7 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Request::Table).if_exists().to_owned())
+            .drop_table(Table::drop().table(Requests::Table).if_exists().to_owned())
             .await
     }
 }

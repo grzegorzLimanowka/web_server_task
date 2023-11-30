@@ -31,3 +31,4 @@ url = { workspace = true }
 log = { workspace = true }
 rand = { workspace = true }
 rstest = { workspace = true }
+dotenvy = { workspace = true }
