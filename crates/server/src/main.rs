@@ -1,6 +1,7 @@
 #![allow(unused)]
 
 mod client;
+mod db;
 mod error;
 mod routes;
 
