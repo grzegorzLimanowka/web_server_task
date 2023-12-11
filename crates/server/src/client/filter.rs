@@ -5,7 +5,7 @@ use async_trait::async_trait;
 #[async_trait]
 pub trait FilterResources<T>
 where
-    T: Ord + Copy + Send + Sync + 'static,
+    T: Ord + Copy,
 {
     /// get non unique: [3, 2, 5, 1, 5, 7, 2, 1] -> [1, 2, 5]
     fn non_unique(&self, input: Vec<T>) -> Vec<T> {
@@ -24,8 +24,6 @@ where
 
         resp_map.iter().filter(|v| v.1 > &1).map(|v| *v.0).collect()
     }
-
-    // TODO: Try to iter map input?
 }
 
 pub struct Filter;

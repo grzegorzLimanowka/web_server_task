@@ -1,9 +1,13 @@
 //! client HTTP facade
 
 mod filter;
+mod manager;
+
+use std::marker::PhantomData;
 
 use async_trait::async_trait;
 use log::error;
+use sea_orm::DatabaseConnection;
 use serde::Deserialize;
 use tokio::task::JoinSet;
 
@@ -12,6 +16,7 @@ use crate::error::AppError;
 use self::filter::{Filter, FilterResources};
 
 #[async_trait]
+/// Trait for fetching resources from API
 pub trait FetchResources<T> {
     /// fetch_single resouce to be fetched
     async fn fetch_single<'a>(
@@ -101,5 +106,38 @@ impl FetchResources<u32> for Client {
         let all = self.fetch_all(amount).await?;
 
         Ok(Filter.non_unique(all))
+    }
+}
+
+// TODO: Decorator macros could be considered to decorator with decorations of saving each request to DB
+struct DbClientDecorator<C>
+where
+    C: FetchResources<u32>,
+{
+    client: C,
+    conn: DatabaseConnection,
+}
+
+#[async_trait]
+impl<C> FetchResources<u32> for DbClientDecorator<C>
+where
+    C: FetchResources<u32> + Send + Sync,
+{
+    /// decorate each request with db saving
+    async fn fetch_single<'a>(
+        &self,
+        tasks: &'a mut JoinSet<Result<reqwest::Response, reqwest::Error>>,
+    ) {
+        self.client.fetch_single(tasks).await
+    }
+
+    /// fetch multiple resources
+    async fn fetch_all<'a>(&self, amount: u32) -> Result<Vec<u32>, AppError> {
+        self.client.fetch_all(amount).await
+    }
+
+    /// fetch multiple non-unique resources
+    async fn fetch_non_unique(&self, amount: u32) -> Result<Vec<u32>, AppError> {
+        self.client.fetch_non_unique(amount).await
     }
 }

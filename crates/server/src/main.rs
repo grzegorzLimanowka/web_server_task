@@ -34,21 +34,16 @@ struct AppState {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(Env::default().default_filter_or("info"));
-
     dotenvy::dotenv().ok();
+
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL is not present as ENVVAR");
     let host = env::var("HOST").expect("HOST is not set as ENVVAR");
     let port = env::var("PORT").expect("PORT is not set as ENVVAR");
     let server_url = format!("{host}:{port}");
-    let server_url = "localhost:8000";
 
-    // let conn = Database::connect(db_url)
-    //     .await
-    //     .expect("Couldnt connect to db !");
-
-    let conn = Database::connect("mysql://root:my-secret-pw@localhost:3306")
+    let conn = Database::connect(db_url)
         .await
-        .expect("Couldn't connect to db");
+        .expect("Couldnt connect to db !");
 
     let client = client::Client::new("https://httpbin.org");
     let state = AppState { conn, client };
