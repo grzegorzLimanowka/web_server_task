@@ -15,6 +15,7 @@ members = [
 tokio = { version = "1.33" }
 actix-web = "4.4"
 async-trait = "0.1"
+futures = "0.3"
 
 sqlx = "0.7"
 sea-orm = "0.12"

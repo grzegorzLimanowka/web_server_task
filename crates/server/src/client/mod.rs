@@ -6,6 +6,7 @@ mod manager;
 use std::marker::PhantomData;
 
 use async_trait::async_trait;
+use futures::StreamExt;
 use log::error;
 use sea_orm::DatabaseConnection;
 use serde::Deserialize;
@@ -19,16 +20,25 @@ use self::filter::{Filter, FilterResources};
 /// Trait for fetching resources from API
 pub trait FetchResources<T> {
     /// fetch_single resouce to be fetched
-    async fn fetch_single<'a>(
+    async fn enqueue_single<'a>(
         &self,
         tasks: &'a mut JoinSet<Result<reqwest::Response, reqwest::Error>>,
     );
 
     /// fetch multiple resources
-    async fn fetch_all<'a>(&self, amount: u32) -> Result<Vec<T>, AppError>;
+    async fn enqueue_all<'a>(
+        &self,
+        amount: u32,
+    ) -> JoinSet<Result<reqwest::Response, reqwest::Error>>;
 
-    /// fetch multiple non-unique resources
-    async fn fetch_non_unique(&self, amount: u32) -> Result<Vec<T>, AppError>;
+    async fn consume_all<'a>(&self, amount: u32) -> Result<Vec<T>, AppError>;
+
+    async fn consume_non_unique(&self, amount: u32) -> Result<Vec<T>, AppError>;
+}
+
+enum RespState {
+    Pending,
+    Finished(Result<u32, AppError>),
 }
 
 #[derive(Deserialize)]
@@ -58,7 +68,7 @@ impl Client {
 
 #[async_trait]
 impl FetchResources<u32> for Client {
-    async fn fetch_single<'a>(
+    async fn enqueue_single<'a>(
         &self,
         tasks: &'a mut JoinSet<Result<reqwest::Response, reqwest::Error>>,
     ) {
@@ -71,13 +81,22 @@ impl FetchResources<u32> for Client {
         tasks.spawn(fut);
     }
 
-    async fn fetch_all<'a>(&self, amount: u32) -> Result<Vec<u32>, AppError> {
-        let mut tasks = JoinSet::new();
-        let mut responses = vec![];
+    async fn enqueue_all<'a>(
+        &self,
+        amount: u32,
+    ) -> JoinSet<Result<reqwest::Response, reqwest::Error>> {
+        let mut tasks: JoinSet<Result<reqwest::Response, reqwest::Error>> = JoinSet::new();
 
         for _ in 0..amount {
-            self.fetch_single(&mut tasks).await;
+            self.enqueue_single(&mut tasks).await;
         }
+
+        tasks
+    }
+
+    async fn consume_all<'a>(&self, amount: u32) -> Result<Vec<u32>, AppError> {
+        let mut tasks = self.enqueue_all(amount).await;
+        let mut responses = vec![];
 
         // TODO: make it guards?
         while let Some(task) = tasks.join_next().await {
@@ -102,8 +121,8 @@ impl FetchResources<u32> for Client {
         Ok(responses)
     }
 
-    async fn fetch_non_unique(&self, amount: u32) -> Result<Vec<u32>, AppError> {
-        let all = self.fetch_all(amount).await?;
+    async fn consume_non_unique(&self, amount: u32) -> Result<Vec<u32>, AppError> {
+        let all = self.consume_all(amount).await?;
 
         Ok(Filter.non_unique(all))
     }
@@ -123,21 +142,25 @@ impl<C> FetchResources<u32> for DbClientDecorator<C>
 where
     C: FetchResources<u32> + Send + Sync,
 {
-    /// decorate each request with db saving
-    async fn fetch_single<'a>(
+    async fn enqueue_single<'a>(
         &self,
         tasks: &'a mut JoinSet<Result<reqwest::Response, reqwest::Error>>,
     ) {
-        self.client.fetch_single(tasks).await
+        todo!()
     }
 
-    /// fetch multiple resources
-    async fn fetch_all<'a>(&self, amount: u32) -> Result<Vec<u32>, AppError> {
-        self.client.fetch_all(amount).await
+    async fn enqueue_all<'a>(
+        &self,
+        amount: u32,
+    ) -> JoinSet<Result<reqwest::Response, reqwest::Error>> {
+        todo!()
     }
 
-    /// fetch multiple non-unique resources
-    async fn fetch_non_unique(&self, amount: u32) -> Result<Vec<u32>, AppError> {
-        self.client.fetch_non_unique(amount).await
+    async fn consume_all<'a>(&self, amount: u32) -> Result<Vec<u32>, AppError> {
+        todo!()
+    }
+
+    async fn consume_non_unique(&self, amount: u32) -> Result<Vec<u32>, AppError> {
+        todo!()
     }
 }

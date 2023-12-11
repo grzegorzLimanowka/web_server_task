@@ -8,7 +8,8 @@ use crate::{
 
 #[get("/run")]
 async fn run(state: web::Data<AppState>) -> Result<String, AppError> {
-    let resources = state.client.fetch_non_unique(30).await?;
+    todo!()
+    // let resources = state.client.fetch_non_unique(30).await?;
 
-    Ok(format!("{:?}", resources))
+    // Ok(format!("{:?}", resources))
 }

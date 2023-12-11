@@ -9,6 +9,7 @@ edition = { workspace = true }
 tokio = { "workspace" = true, features = ["full"] }
 actix-web = { workspace = true }
 async-trait = { workspace = true }
+futures = { workspace = true }
 
 sqlx = { workspace = true }
 sea-orm = { workspace = true, features = [

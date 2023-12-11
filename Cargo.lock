@@ -2758,6 +2758,7 @@ dependencies = [
  "dotenvy",
  "entity",
  "env_logger",
+ "futures",
  "log",
  "migration",
  "rand",
