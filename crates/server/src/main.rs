@@ -40,10 +40,15 @@ async fn main() -> std::io::Result<()> {
     let host = env::var("HOST").expect("HOST is not set as ENVVAR");
     let port = env::var("PORT").expect("PORT is not set as ENVVAR");
     let server_url = format!("{host}:{port}");
+    let server_url = "localhost:8000";
 
-    let conn = Database::connect(db_url)
+    // let conn = Database::connect(db_url)
+    //     .await
+    //     .expect("Couldnt connect to db !");
+
+    let conn = Database::connect("mysql://root:my-secret-pw@localhost:3306")
         .await
-        .expect("Couldnt connect to db !");
+        .expect("Couldn't connect to db");
 
     let client = client::Client::new("https://httpbin.org");
     let state = AppState { conn, client };

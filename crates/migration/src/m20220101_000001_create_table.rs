@@ -37,16 +37,16 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Requests::Id)
-                            .integer()
+                            .string()
                             .not_null()
-                            .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Requests::BatchId).integer().not_null())
+                    .col(ColumnDef::new(Requests::BatchId).string().not_null())
                     .col(ColumnDef::new(Requests::Value).string().not_null())
                     .col(
                         ColumnDef::new(Requests::Status)
-                            .enumeration(Status::Table, Status::iter().skip(1)),
+                            .enumeration(Status::Table, Status::iter().skip(1))
+                            .not_null(),
                     )
                     .to_owned(),
             )

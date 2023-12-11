@@ -13,8 +13,14 @@ use self::filter::{Filter, FilterResources};
 
 #[async_trait]
 pub trait FetchResources<T> {
-    /// fetch multiple resources  
-    async fn fetch_all(&self, amount: u32) -> Result<Vec<T>, AppError>;
+    /// fetch_single resouce to be fetched
+    async fn fetch_single<'a>(
+        &self,
+        tasks: &'a mut JoinSet<Result<reqwest::Response, reqwest::Error>>,
+    );
+
+    /// fetch multiple resources
+    async fn fetch_all<'a>(&self, amount: u32) -> Result<Vec<T>, AppError>;
 
     /// fetch multiple non-unique resources
     async fn fetch_non_unique(&self, amount: u32) -> Result<Vec<T>, AppError>;
@@ -47,21 +53,28 @@ impl Client {
 
 #[async_trait]
 impl FetchResources<u32> for Client {
-    // TODO: Split into smaller?
-    async fn fetch_all(&self, amount: u32) -> Result<Vec<u32>, AppError> {
+    async fn fetch_single<'a>(
+        &self,
+        tasks: &'a mut JoinSet<Result<reqwest::Response, reqwest::Error>>,
+    ) {
         let url: String = format!("{}/post", self.base_url);
 
+        let random = rand::random::<u32>() % 10;
+        let body = format!("{{\"value\": {} }}", random); // TODO
+
+        let fut = self.client.post(url.clone()).body(body).send();
+        tasks.spawn(fut);
+    }
+
+    async fn fetch_all<'a>(&self, amount: u32) -> Result<Vec<u32>, AppError> {
         let mut tasks = JoinSet::new();
         let mut responses = vec![];
 
         for _ in 0..amount {
-            let random = rand::random::<u32>() % 10;
-            let body = format!("{{\"value\": {} }}", random); // TODO
-
-            let fut = self.client.post(url.clone()).body(body).send();
-            tasks.spawn(fut);
+            self.fetch_single(&mut tasks).await;
         }
 
+        // TODO: make it guards?
         while let Some(task) = tasks.join_next().await {
             match task {
                 Ok(Ok(res)) => match res.json::<Response>().await {
@@ -69,7 +82,7 @@ impl FetchResources<u32> for Client {
                         responses.push(res.json.value);
                     }
                     Err(e) => {
-                        error!("Error with deserialiszing response: {}", e);
+                        error!("Error with deserializing response: {}", e);
                     }
                 },
                 Ok(Err(e)) => {
