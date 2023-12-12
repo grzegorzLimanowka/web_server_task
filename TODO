@@ -2,11 +2,11 @@
 
 Calling this endpoint (`POST`? `GET`? )should cause application to:
 
-- [ ] Send 30 POST requests to <https://httpbin.org/post>
-  - [ ] Each request should have JSON body in format {"value": N}, where N - randomly generated number in range od [0,10]
-  - [ ] Server should parse the responses and extract json.value from each JSON response.
-- [ ] It should calculate and return collection containing the numbers that appear more than once (most frequent numbers) in asc. order
-- [ ] If any request fails, server should log error, but continue procesing the remaining requests
+- [x] Send 30 POST requests to <https://httpbin.org/post>
+  - [x] Each request should have JSON body in format {"value": N}, where N - randomly generated number in range od [0,10]
+  - [x] Server should parse the responses and extract json.value from each JSON response.
+- [x] It should calculate and return collection containing the numbers that appear more than once (most frequent numbers) in asc. order
+- [x] If any request fails, server should log error, but continue procesing the remaining requests
 - [ ] Server should save each request into MySql database. Each stored request should have a unique identifier and generated value
 
 Optional:

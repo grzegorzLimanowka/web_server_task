@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use ::entity::{
     prelude::*,
     requests::{self, ActiveModel},
@@ -14,10 +16,11 @@ impl Query {
         Requests::find_by_id(id).one(db).await
     }
 
-    pub async fn find_requests_by_batch_id(
-        batch_id: i32,
-        db: &DbConn,
-    ) -> Result<Vec<requests::Model>, DbErr> {
-        Requests::find_by_id(batch_id).all(db).await
-    }
+    // Todo:
+    // pub async fn find_requests_by_batch_id(
+    //     batch_id: &str,
+    //     db: &DbConn,
+    // ) -> Result<Vec<requests::Model>, DbErr> {
+    //     Requests::find(batch_id).all(db).await
+    // }
 }

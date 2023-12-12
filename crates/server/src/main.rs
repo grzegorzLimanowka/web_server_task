@@ -1,5 +1,3 @@
-#![allow(unused)]
-
 mod client;
 mod db;
 mod error;
@@ -7,29 +5,23 @@ mod routes;
 
 use std::env;
 
-use client::Client;
+use client::{Client, Fetcher};
 
 use actix_web::{
-    get,
     middleware::Logger,
     web::{self},
-    App, HttpServer, Result,
+    App, HttpServer,
 };
 use env_logger::Env;
 use routes::run::run;
-use sea_orm::{Database, DatabaseConnection};
-
-use crate::{client::FetchResources, error::AppError};
+use sea_orm::Database;
 
 #[derive(Debug, Clone)]
 struct AppState {
-    conn: DatabaseConnection,
-    client: Client,
+    // conn: DatabaseConnection,
+    // client: Client,
+    fetcher: Fetcher<Client>,
 }
-
-// pub struct Params {
-//     page
-// }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -46,7 +38,9 @@ async fn main() -> std::io::Result<()> {
         .expect("Couldnt connect to db !");
 
     let client = client::Client::new("https://httpbin.org");
-    let state = AppState { conn, client };
+    let fetcher = Fetcher { client, conn };
+
+    let state = AppState { fetcher };
 
     HttpServer::new(move || {
         App::new()
@@ -59,11 +53,3 @@ async fn main() -> std::io::Result<()> {
     .run()
     .await
 }
-
-// localhost:8000
-
-// let db: DatabaseConnection = Database::connect("mysql://root:my-secret-pw@localhost:3306")
-// .await
-// .unwrap();
-
-// println!("{:?}", db);

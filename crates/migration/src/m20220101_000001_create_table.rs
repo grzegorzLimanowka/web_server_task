@@ -8,9 +8,11 @@ pub struct Migration;
 #[derive(DeriveIden)]
 enum Requests {
     Table,
-    // Single request
+    // Auto Inc ID
     Id,
-    // Batch ref
+    // Request ID
+    RequestId,
+    // Batch ID
     BatchId,
     // Value received
     Value,
@@ -37,10 +39,12 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Requests::Id)
-                            .string()
+                            .integer()
                             .not_null()
+                            .auto_increment()
                             .primary_key(),
                     )
+                    .col(ColumnDef::new(Requests::RequestId).string().not_null())
                     .col(ColumnDef::new(Requests::BatchId).string().not_null())
                     .col(ColumnDef::new(Requests::Value).string().not_null())
                     .col(

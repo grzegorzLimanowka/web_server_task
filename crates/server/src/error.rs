@@ -1,8 +1,10 @@
 use actix_web::{error, http::header::ContentType, HttpResponse};
+use sea_orm::DbErr;
 use thiserror::Error;
 use tokio::task::JoinError;
 use url::ParseError;
 
+#[allow(unused)]
 #[derive(Error, Debug)]
 pub enum AppError {
     #[error("SomeError")]
@@ -19,6 +21,9 @@ pub enum AppError {
 
     #[error("Task error {0}")]
     TaskError(#[from] JoinError),
+
+    #[error("Db error {0}")]
+    DbError(#[from] DbErr),
 }
 
 impl error::ResponseError for AppError {
@@ -30,6 +35,7 @@ impl error::ResponseError for AppError {
             AppError::ClientHttpError(_) => reqwest::StatusCode::INTERNAL_SERVER_ERROR,
             AppError::JoinError(_) => reqwest::StatusCode::INTERNAL_SERVER_ERROR,
             AppError::TaskError(_) => reqwest::StatusCode::INTERNAL_SERVER_ERROR,
+            AppError::DbError(_) => reqwest::StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
@@ -39,9 +45,3 @@ impl error::ResponseError for AppError {
             .body(self.to_string())
     }
 }
-
-// #[derive(Error, Debug)]
-// pub enum ClientHttpError {
-//     #[error("Reqwest error {0}")]
-//     ReqwestError(reqwest::Error),
-// }

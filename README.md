@@ -45,3 +45,8 @@ Go to mysql CLI
 
 Apply migrations (SeaORM)
 ❯ DATABASE_URL=mysql://root:my-secret-pw@localhost:3306/testing1 sea-orm-cli migrate up
+
+Run:
+❯ DATABASE_URL=mysql://root:my-secret-pw@localhost:3306/testing1 HOST=localhost PORT=8000 cargo run --bin server
+
+❯ sea-orm-cli generate entity --database-url mysql://root:my-secret-pw@localhost:3306/testing1

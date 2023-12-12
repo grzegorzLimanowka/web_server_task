@@ -1,21 +1,21 @@
-// #[get("/run")]
-// async fn (client: web::Data<Client>) -> Result<String, AppError> {
-//     let resources = client.fetch_non_unique(30).await?;
-
-//     Ok(format!("{:?}", resources))
-// }
-
 /*
+TODO:
 
-
+// get all:
 GET    /requests
+
+// get single
 GET    /requests/id:2323
 
+// create single
 POST   /requests
 
+// update single
 PATCH  /requests/id:2232
 
+// delete all
+DELETE /requests
+
+// delete single
 DELETE /requests/id:2323
-
-
 */
