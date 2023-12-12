@@ -7,7 +7,7 @@ Calling this endpoint (`POST`? `GET`? )should cause application to:
   - [x] Server should parse the responses and extract json.value from each JSON response.
 - [x] It should calculate and return collection containing the numbers that appear more than once (most frequent numbers) in asc. order
 - [x] If any request fails, server should log error, but continue procesing the remaining requests
-- [ ] Server should save each request into MySql database. Each stored request should have a unique identifier and generated value
+- [x] Server should save each request into MySql database. Each stored request should have a unique identifier and generated value
 
 Optional:
 
@@ -20,7 +20,7 @@ Optional:
 
 Other Requirements:
 
-- [ ] add proper error hanlding for HTTP requests, db interactions, auth
+- [ ] (partially DONE) add proper error hanlding for HTTP requests, db interactions, auth
 - [ ] test suite for `/run` endpoint
 - [ ] (Optional) test suite for authentication
 - [ ] add docker support
